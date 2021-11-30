@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, Alert } from 'react-native';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function App() {
+import withAsyncStorage from './withAsyncStorage';
+
+const App = () => {
   const [carId, setCarId] = useState('');
   const [year, setYear] = useState('');
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
-  const [carIdGet, setCarIdGet] = useState('');
+  const [carGetDeleteId, setCarGetDeleteId] = useState('');
 
   const onPressSave = async () => {
     if (carId.length === 0 || year.length === 0 || make.length === 0 || model.length === 0) {
@@ -23,6 +24,7 @@ export default function App() {
         model,
       };
       await AsyncStorage.setItem(carId, JSON.stringify(carData));
+      Alert.alert('Added Car:', JSON.stringify(carData));
       setCarId('');
       setYear('');
       setMake('');
@@ -33,39 +35,39 @@ export default function App() {
   };
 
   const onPressGet = async () => {
-    if (carIdGet.length === 0) {
+    if (carGetDeleteId.length === 0) {
       Alert.alert('Car Id is empty', 'Please write data to field');
       return;
     }
     try {
-      const jsonValue = await AsyncStorage.getItem(carIdGet);
+      const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
       // JSON.parse(jsonValue);
       if (jsonValue !== null) {
         Alert.alert('Selected Car:', jsonValue);
       } else {
         Alert.alert('Get error', 'No car with such id');
       }
-      setCarIdGet('');
+      // setcarGetDeleteId('');
     } catch (e) {
       console.log(e);
     }
   };
 
   const onPressDelete = async () => {
-    if (carIdGet.length === 0) {
+    if (carGetDeleteId.length === 0) {
       Alert.alert('Car Id is empty', 'Please write data to field');
       return;
     }
     try {
-      const jsonValue = await AsyncStorage.getItem(carIdGet);
+      const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
       // JSON.parse(jsonValue);
       if (jsonValue !== null) {
         Alert.alert('Car deleted:', jsonValue);
-        await AsyncStorage.removeItem(carIdGet);
+        await AsyncStorage.removeItem(carGetDeleteId);
       } else {
         Alert.alert('Delete error', 'No car with such id');
       }
-      setCarIdGet('');
+      // setcarGetDeleteId('');
     } catch (e) {
       console.log(e);
     }
@@ -101,21 +103,20 @@ export default function App() {
         <Text style={styles.title}>Get Car Area</Text>
         <TextInput
           style={styles.input}
-          onChangeText={setCarIdGet}
-          value={carIdGet}
+          onChangeText={setCarGetDeleteId}
+          value={carGetDeleteId}
           placeholder={'Car Id'}
         />
         <Button onPress={onPressGet} title="Get Car" color="white" />
-        <Button onPress={onPressDelete} title="Delete Car" color="white" />
+        <Button onPress={onPressDelete} title="Delete Car" color="red" />
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0080ff',
     padding: 20,
@@ -143,3 +144,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
+export default withAsyncStorage(App);
