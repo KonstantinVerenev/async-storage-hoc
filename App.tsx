@@ -1,77 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
 
 import withAsyncStorage from './withAsyncStorage';
 
-const App = () => {
+export type AppProps = {
+  onPressSave: (carId: string, year: string, make: string, model: string) => void;
+  onPressGet: (carGetDeleteId: string) => void;
+  onPressDelete: (carGetDeleteId: string) => void;
+};
+
+const App: React.FC<AppProps> = ({ onPressSave, onPressGet, onPressDelete }) => {
   const [carId, setCarId] = useState('');
   const [year, setYear] = useState('');
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
   const [carGetDeleteId, setCarGetDeleteId] = useState('');
-
-  const onPressSave = async () => {
-    if (carId.length === 0 || year.length === 0 || make.length === 0 || model.length === 0) {
-      Alert.alert('Some field is empty', 'Please write data to all fileds');
-      return;
-    }
-    try {
-      const carData = {
-        carId,
-        year,
-        make,
-        model,
-      };
-      await AsyncStorage.setItem(carId, JSON.stringify(carData));
-      Alert.alert('Added Car:', JSON.stringify(carData));
-      setCarId('');
-      setYear('');
-      setMake('');
-      setModel('');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const onPressGet = async () => {
-    if (carGetDeleteId.length === 0) {
-      Alert.alert('Car Id is empty', 'Please write data to field');
-      return;
-    }
-    try {
-      const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
-      // JSON.parse(jsonValue);
-      if (jsonValue !== null) {
-        Alert.alert('Selected Car:', jsonValue);
-      } else {
-        Alert.alert('Get error', 'No car with such id');
-      }
-      // setcarGetDeleteId('');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const onPressDelete = async () => {
-    if (carGetDeleteId.length === 0) {
-      Alert.alert('Car Id is empty', 'Please write data to field');
-      return;
-    }
-    try {
-      const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
-      // JSON.parse(jsonValue);
-      if (jsonValue !== null) {
-        Alert.alert('Car deleted:', jsonValue);
-        await AsyncStorage.removeItem(carGetDeleteId);
-      } else {
-        Alert.alert('Delete error', 'No car with such id');
-      }
-      // setcarGetDeleteId('');
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -97,7 +40,17 @@ const App = () => {
           value={model}
           placeholder={'Model'}
         />
-        <Button onPress={onPressSave} title="Save Car" color="white" />
+        <Button
+          onPress={() => {
+            onPressSave(carId, year, make, model);
+            setCarId('');
+            setYear('');
+            setMake('');
+            setModel('');
+          }}
+          title="Save Car"
+          color="white"
+        />
       </View>
       <View style={styles.section}>
         <Text style={styles.title}>Get Car Area</Text>
@@ -107,8 +60,22 @@ const App = () => {
           value={carGetDeleteId}
           placeholder={'Car Id'}
         />
-        <Button onPress={onPressGet} title="Get Car" color="white" />
-        <Button onPress={onPressDelete} title="Delete Car" color="red" />
+        <Button
+          onPress={() => {
+            onPressGet(carGetDeleteId);
+            setCarGetDeleteId('');
+          }}
+          title="Get Car"
+          color="white"
+        />
+        <Button
+          onPress={() => {
+            onPressDelete(carGetDeleteId);
+            setCarGetDeleteId('');
+          }}
+          title="Delete Car"
+          color="red"
+        />
       </View>
     </View>
   );
