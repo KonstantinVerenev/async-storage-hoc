@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, SafeAreaView, Alert } from 'react-native';
 
 import { CarData } from './types/CarData';
@@ -18,7 +18,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storag
   });
   const [carGetId, setCarGetId] = useState('');
 
-  const onPressSave = () => {
+  const onPressSave = useCallback(() => {
     if (!carData.carId || !carData.year || !carData.make || !carData.model) {
       Alert.alert('Some field is empty', 'Please write data to all fileds');
       return;
@@ -26,9 +26,9 @@ const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storag
 
     storageSave(carData.carId, carData);
     setCarData({ carId: '', year: '', make: '', model: '' });
-  };
+  }, [carData, storageSave]);
 
-  const onPressGet = () => {
+  const onPressGet = useCallback(() => {
     if (!carGetId) {
       Alert.alert('Car Id field is empty', 'Please write data to field');
       return;
@@ -36,9 +36,9 @@ const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storag
 
     storageGet(carGetId);
     setCarGetId('');
-  };
+  }, [carGetId, storageGet]);
 
-  const onPressDelete = () => {
+  const onPressDelete = useCallback(() => {
     if (!carGetId) {
       Alert.alert('Car Id field is empty', 'Please write data to field');
       return;
@@ -46,7 +46,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storag
 
     storageDelete(carGetId);
     setCarGetId('');
-  };
+  }, [carGetId, storageDelete]);
 
   return (
     <SafeAreaView style={styles.container}>

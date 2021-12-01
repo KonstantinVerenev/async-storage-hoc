@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -6,16 +6,16 @@ import { CarData } from '../types/CarData';
 
 export default function withAsyncStorage<Props>(Component: React.ComponentType<Props>) {
   return (props: Props) => {
-    const storageSave = async (key: string, carData: CarData): Promise<void> => {
+    const storageSave = useCallback(async (key: string, carData: CarData): Promise<void> => {
       try {
         await AsyncStorage.setItem(key, JSON.stringify(carData));
         Alert.alert('Added Car:', JSON.stringify(carData));
       } catch (e) {
         console.log(e);
       }
-    };
+    }, []);
 
-    const storageGet = async (key: string) => {
+    const storageGet = useCallback(async (key: string) => {
       try {
         const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue !== null) {
@@ -26,9 +26,9 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
       } catch (e) {
         console.log(e);
       }
-    };
+    }, []);
 
-    const storageDelete = async (key: string) => {
+    const storageDelete = useCallback(async (key: string) => {
       try {
         const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue !== null) {
@@ -40,7 +40,7 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
       } catch (e) {
         console.log(e);
       }
-    };
+    }, []);
 
     return (
       <Component
