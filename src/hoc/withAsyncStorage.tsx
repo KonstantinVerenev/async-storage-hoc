@@ -2,9 +2,11 @@ import React from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { CarData } from '../types/CarData';
+
 export default function withAsyncStorage<Props>(Component: React.ComponentType<Props>) {
   return (props: Props) => {
-    const onPressSave = async (carId: string, year: string, make: string, model: string) => {
+    const onPressSave = async ({ carId, year, make, model }: CarData): Promise<void> => {
       if (carId.length === 0 || year.length === 0 || make.length === 0 || model.length === 0) {
         Alert.alert('Some field is empty', 'Please write data to all fileds');
         return;
@@ -25,7 +27,7 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
 
     const onPressGet = async (carGetDeleteId: string) => {
       if (carGetDeleteId.length === 0) {
-        Alert.alert('Car Id is empty', 'Please write data to field');
+        Alert.alert('Car Id field is empty', 'Please write data to field');
         return;
       }
       try {
@@ -33,7 +35,7 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
         if (jsonValue !== null) {
           Alert.alert('Selected Car:', jsonValue);
         } else {
-          Alert.alert('Get error', 'No car with such id');
+          Alert.alert('No car with such id');
         }
       } catch (e) {
         console.log(e);
@@ -42,7 +44,7 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
 
     const onPressDelete = async (carGetDeleteId: string) => {
       if (carGetDeleteId.length === 0) {
-        Alert.alert('Car Id is empty', 'Please write data to field');
+        Alert.alert('Car Id field is empty', 'Please write data to field');
         return;
       }
       try {
@@ -51,7 +53,7 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
           Alert.alert('Car deleted:', jsonValue);
           await AsyncStorage.removeItem(carGetDeleteId);
         } else {
-          Alert.alert('Delete error', 'No car with such id');
+          Alert.alert('No car with such id');
         }
       } catch (e) {
         console.log(e);
