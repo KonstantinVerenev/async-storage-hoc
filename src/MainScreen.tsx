@@ -1,25 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, SafeAreaView, Alert } from 'react-native';
 
 import { CarData } from './types/CarData';
 
 type MainScreenProps = {
-  onPressSave?: (carData: CarData) => void;
-  onPressGet?: (carGetDeleteId: string) => void;
-  onPressDelete?: (carGetDeleteId: string) => void;
+  storageSave: (carId: string, carData: CarData) => void;
+  storageGet: (carGetDeleteId: string) => void;
+  storageDelete: (carGetDeleteId: string) => void;
 };
 
-const storageErrorFunc = () => {
-  Alert.alert('Storage access error');
-};
-
-const MainScreen: React.FC<MainScreenProps> = ({
-  onPressSave = storageErrorFunc,
-  onPressGet = storageErrorFunc,
-  onPressDelete = storageErrorFunc,
-}) => {
-  const [carData, setCarData] = useState({ carId: '', year: '', make: '', model: '' });
+const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storageDelete }) => {
+  const [carData, setCarData] = useState({
+    carId: '',
+    year: '',
+    make: '',
+    model: '',
+  });
   const [carGetId, setCarGetId] = useState('');
+
+  const onPressSave = () => {
+    if (!carData.carId || !carData.year || !carData.make || !carData.model) {
+      Alert.alert('Some field is empty', 'Please write data to all fileds');
+      return;
+    }
+
+    storageSave(carData.carId, carData);
+    setCarData({ carId: '', year: '', make: '', model: '' });
+  };
+
+  const onPressGet = () => {
+    if (!carGetId) {
+      Alert.alert('Car Id field is empty', 'Please write data to field');
+      return;
+    }
+
+    storageGet(carGetId);
+    setCarGetId('');
+  };
+
+  const onPressDelete = () => {
+    if (!carGetId) {
+      Alert.alert('Car Id field is empty', 'Please write data to field');
+      return;
+    }
+
+    storageDelete(carGetId);
+    setCarGetId('');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,14 +77,7 @@ const MainScreen: React.FC<MainScreenProps> = ({
           value={carData.model}
           placeholder={'Model'}
         />
-        <Button
-          onPress={() => {
-            onPressSave(carData);
-            setCarData({ carId: '', year: '', make: '', model: '' });
-          }}
-          title="Save Car"
-          color="white"
-        />
+        <Button onPress={onPressSave} title="Save Car" color="white" />
       </View>
       <View style={styles.section}>
         <Text style={styles.title}>Get Car Area</Text>
@@ -67,22 +87,8 @@ const MainScreen: React.FC<MainScreenProps> = ({
           value={carGetId}
           placeholder={'Car Id'}
         />
-        <Button
-          onPress={() => {
-            onPressGet(carGetId);
-            setCarGetId('');
-          }}
-          title="Get Car"
-          color="white"
-        />
-        <Button
-          onPress={() => {
-            onPressDelete(carGetId);
-            setCarGetId('');
-          }}
-          title="Delete Car"
-          color="red"
-        />
+        <Button onPress={onPressGet} title="Get Car" color="white" />
+        <Button onPress={onPressDelete} title="Delete Car" color="red" />
       </View>
     </SafeAreaView>
   );

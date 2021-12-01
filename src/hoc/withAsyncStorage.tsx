@@ -6,32 +6,18 @@ import { CarData } from '../types/CarData';
 
 export default function withAsyncStorage<Props>(Component: React.ComponentType<Props>) {
   return (props: Props) => {
-    const onPressSave = async ({ carId, year, make, model }: CarData): Promise<void> => {
-      if (carId.length === 0 || year.length === 0 || make.length === 0 || model.length === 0) {
-        Alert.alert('Some field is empty', 'Please write data to all fileds');
-        return;
-      }
+    const storageSave = async (key: string, carData: CarData): Promise<void> => {
       try {
-        const carData = {
-          carId,
-          year,
-          make,
-          model,
-        };
-        await AsyncStorage.setItem(carId, JSON.stringify(carData));
+        await AsyncStorage.setItem(key, JSON.stringify(carData));
         Alert.alert('Added Car:', JSON.stringify(carData));
       } catch (e) {
         console.log(e);
       }
     };
 
-    const onPressGet = async (carGetDeleteId: string) => {
-      if (carGetDeleteId.length === 0) {
-        Alert.alert('Car Id field is empty', 'Please write data to field');
-        return;
-      }
+    const storageGet = async (key: string) => {
       try {
-        const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
+        const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue !== null) {
           Alert.alert('Selected Car:', jsonValue);
         } else {
@@ -42,16 +28,12 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
       }
     };
 
-    const onPressDelete = async (carGetDeleteId: string) => {
-      if (carGetDeleteId.length === 0) {
-        Alert.alert('Car Id field is empty', 'Please write data to field');
-        return;
-      }
+    const storageDelete = async (key: string) => {
       try {
-        const jsonValue = await AsyncStorage.getItem(carGetDeleteId);
+        const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue !== null) {
           Alert.alert('Car deleted:', jsonValue);
-          await AsyncStorage.removeItem(carGetDeleteId);
+          await AsyncStorage.removeItem(key);
         } else {
           Alert.alert('No car with such id');
         }
@@ -63,9 +45,9 @@ export default function withAsyncStorage<Props>(Component: React.ComponentType<P
     return (
       <Component
         {...props}
-        onPressSave={onPressSave}
-        onPressGet={onPressGet}
-        onPressDelete={onPressDelete}
+        storageSave={storageSave}
+        storageGet={storageGet}
+        storageDelete={storageDelete}
       />
     );
   };
