@@ -4,49 +4,54 @@ import { View, Text, StyleSheet, TextInput, Button, SafeAreaView, Alert } from '
 import { CarData } from './types/CarData';
 
 type MainScreenProps = {
-  storageSave: (carId: string, carData: CarData) => void;
-  storageGet: (carGetDeleteId: string) => void;
-  storageDelete: (carGetDeleteId: string) => void;
+  saveInStorage: (carId: string, carData: CarData) => void;
+  getFromStorage: (carId: string) => void;
+  deleteFromStorage: (carId: string) => void;
 };
 
-const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storageDelete }) => {
-  const [carData, setCarData] = useState({
+const MainScreen: React.FC<MainScreenProps> = ({
+  saveInStorage,
+  getFromStorage,
+  deleteFromStorage,
+}) => {
+  const [carSaveData, setCarSaveData] = useState({
     carId: '',
     year: '',
     make: '',
     model: '',
   });
-  const [carGetId, setCarGetId] = useState('');
+  const [carId, setCarId] = useState('');
 
   const onPressSave = useCallback(() => {
-    if (!carData.carId || !carData.year || !carData.make || !carData.model) {
+    if (!carSaveData.carId || !carSaveData.year || !carSaveData.make || !carSaveData.model) {
       Alert.alert('Some field is empty', 'Please write data to all fileds');
       return;
     }
 
-    storageSave(carData.carId, carData);
-    setCarData({ carId: '', year: '', make: '', model: '' });
-  }, [carData, storageSave]);
+    saveInStorage(carSaveData.carId, carSaveData);
+    Alert.alert('Added Car:', JSON.stringify(carSaveData));
+    setCarSaveData({ carId: '', year: '', make: '', model: '' });
+  }, [carSaveData, saveInStorage]);
 
   const onPressGet = useCallback(() => {
-    if (!carGetId) {
+    if (!carId) {
       Alert.alert('Car Id field is empty', 'Please write data to field');
       return;
     }
 
-    storageGet(carGetId);
-    setCarGetId('');
-  }, [carGetId, storageGet]);
+    getFromStorage(carId);
+    setCarId('');
+  }, [carId, getFromStorage]);
 
   const onPressDelete = useCallback(() => {
-    if (!carGetId) {
+    if (!carId) {
       Alert.alert('Car Id field is empty', 'Please write data to field');
       return;
     }
 
-    storageDelete(carGetId);
-    setCarGetId('');
-  }, [carGetId, storageDelete]);
+    deleteFromStorage(carId);
+    setCarId('');
+  }, [carId, deleteFromStorage]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,37 +59,37 @@ const MainScreen: React.FC<MainScreenProps> = ({ storageSave, storageGet, storag
         <Text style={styles.title}>Save Car Area</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(carId) => setCarData({ ...carData, carId: carId })}
-          value={carData.carId}
+          onChangeText={(carId) => setCarSaveData({ ...carSaveData, carId: carId })}
+          value={carSaveData.carId}
           placeholder={'Car Id'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(year) => setCarData({ ...carData, year: year })}
-          value={carData.year}
+          onChangeText={(year) => setCarSaveData({ ...carSaveData, year: year })}
+          value={carSaveData.year}
           keyboardType="numeric"
           placeholder={'Year'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(make) => setCarData({ ...carData, make: make })}
-          value={carData.make}
+          onChangeText={(make) => setCarSaveData({ ...carSaveData, make: make })}
+          value={carSaveData.make}
           placeholder={'Make'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(model) => setCarData({ ...carData, model: model })}
-          value={carData.model}
+          onChangeText={(model) => setCarSaveData({ ...carSaveData, model: model })}
+          value={carSaveData.model}
           placeholder={'Model'}
         />
         <Button onPress={onPressSave} title="Save Car" color="white" />
       </View>
       <View style={styles.section}>
-        <Text style={styles.title}>Get Car Area</Text>
+        <Text style={styles.title}>Get and Delete Car Area</Text>
         <TextInput
           style={styles.input}
-          onChangeText={setCarGetId}
-          value={carGetId}
+          onChangeText={setCarId}
+          value={carId}
           placeholder={'Car Id'}
         />
         <Button onPress={onPressGet} title="Get Car" color="white" />
