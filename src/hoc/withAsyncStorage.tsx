@@ -2,9 +2,11 @@ import React, { useCallback } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function withAsyncStorage<Props>(Component: React.ComponentType<Props>) {
+export default function withAsyncStorage<Props>(
+  Component: React.ComponentType<Props>,
+): React.FC<Props> {
   return (props: Props) => {
-    const saveInStorage = useCallback(async (key: string, data: unknown): Promise<void> => {
+    const saveInStorage = useCallback(async (key: string, data: unknown) => {
       try {
         await AsyncStorage.setItem(key, JSON.stringify(data));
       } catch (e) {

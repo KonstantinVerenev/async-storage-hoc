@@ -22,6 +22,17 @@ const MainScreen: React.FC<MainScreenProps> = ({
   });
   const [carId, setCarId] = useState('');
 
+  const onUpdateCarDetails = (field: string) => {
+    return (text: string): void => {
+      setCarDetails({ ...carDetails, [field]: text });
+    };
+  };
+
+  const onUpdateCarId = onUpdateCarDetails('carId');
+  const onUpdateYear = onUpdateCarDetails('year');
+  const onUpdateMake = onUpdateCarDetails('make');
+  const onUpdateModel = onUpdateCarDetails('model');
+
   const onPressSave = useCallback(() => {
     if (!carDetails.carId || !carDetails.year || !carDetails.make || !carDetails.model) {
       Alert.alert('Unable to save car details', 'Please, fill all required fields');
@@ -59,26 +70,26 @@ const MainScreen: React.FC<MainScreenProps> = ({
         <Text style={styles.title}>Save Car Area</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(carId) => setCarDetails({ ...carDetails, carId: carId })}
+          onChangeText={onUpdateCarId}
           value={carDetails.carId}
           placeholder={'Car Id'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(year) => setCarDetails({ ...carDetails, year: year })}
+          onChangeText={onUpdateYear}
           value={carDetails.year}
           keyboardType="numeric"
           placeholder={'Year'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(make) => setCarDetails({ ...carDetails, make: make })}
+          onChangeText={onUpdateMake}
           value={carDetails.make}
           placeholder={'Make'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(model) => setCarDetails({ ...carDetails, model: model })}
+          onChangeText={onUpdateModel}
           value={carDetails.model}
           placeholder={'Model'}
         />
