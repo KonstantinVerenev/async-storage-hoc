@@ -14,7 +14,7 @@ const MainScreen: React.FC<MainScreenProps> = ({
   getFromStorage,
   deleteFromStorage,
 }) => {
-  const [carSaveData, setCarSaveData] = useState({
+  const [carDetails, setCarDetails] = useState({
     carId: '',
     year: '',
     make: '',
@@ -23,15 +23,15 @@ const MainScreen: React.FC<MainScreenProps> = ({
   const [carId, setCarId] = useState('');
 
   const onPressSave = useCallback(() => {
-    if (!carSaveData.carId || !carSaveData.year || !carSaveData.make || !carSaveData.model) {
-      Alert.alert('Some field is empty', 'Please write data to all fileds');
+    if (!carDetails.carId || !carDetails.year || !carDetails.make || !carDetails.model) {
+      Alert.alert('Unable to save car details', 'Please, fill all required fields');
       return;
     }
 
-    saveInStorage(carSaveData.carId, carSaveData);
-    Alert.alert('Added Car:', JSON.stringify(carSaveData));
-    setCarSaveData({ carId: '', year: '', make: '', model: '' });
-  }, [carSaveData, saveInStorage]);
+    saveInStorage(carDetails.carId, carDetails);
+    Alert.alert('Added Car:', JSON.stringify(carDetails));
+    setCarDetails({ carId: '', year: '', make: '', model: '' });
+  }, [carDetails, saveInStorage]);
 
   const onPressGet = useCallback(() => {
     if (!carId) {
@@ -59,27 +59,27 @@ const MainScreen: React.FC<MainScreenProps> = ({
         <Text style={styles.title}>Save Car Area</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(carId) => setCarSaveData({ ...carSaveData, carId: carId })}
-          value={carSaveData.carId}
+          onChangeText={(carId) => setCarDetails({ ...carDetails, carId: carId })}
+          value={carDetails.carId}
           placeholder={'Car Id'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(year) => setCarSaveData({ ...carSaveData, year: year })}
-          value={carSaveData.year}
+          onChangeText={(year) => setCarDetails({ ...carDetails, year: year })}
+          value={carDetails.year}
           keyboardType="numeric"
           placeholder={'Year'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(make) => setCarSaveData({ ...carSaveData, make: make })}
-          value={carSaveData.make}
+          onChangeText={(make) => setCarDetails({ ...carDetails, make: make })}
+          value={carDetails.make}
           placeholder={'Make'}
         />
         <TextInput
           style={styles.input}
-          onChangeText={(model) => setCarSaveData({ ...carSaveData, model: model })}
-          value={carSaveData.model}
+          onChangeText={(model) => setCarDetails({ ...carDetails, model: model })}
+          value={carDetails.model}
           placeholder={'Model'}
         />
         <Button onPress={onPressSave} title="Save Car" color="white" />
